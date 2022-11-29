@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="StaticRouterMain" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="launch.StaticRouterMain" />
+    <module name="static-router" />
+    <option name="WORKING_DIRECTORY" value="$OutputPath$" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="launch.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
