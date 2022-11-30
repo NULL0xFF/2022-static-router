@@ -1,0 +1,35 @@
+<component name="libraryTable">
+    <library name="junit.jupiter" type="repository">
+        <properties maven-id="org.junit.jupiter:junit-jupiter:5.8.2"/>
+        <CLASSES>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-5.8.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-api-5.8.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/opentest4j-1.2.01.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-commons-1.8.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/apiguardian-api-1.1.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-params-5.8.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-engine-5.8.21.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-engine-1.8.21.jar!/"/>
+        </CLASSES>
+        <JAVADOC>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-5.8.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-api-5.8.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/opentest4j-1.2.0-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-commons-1.8.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/apiguardian-api-1.1.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-params-5.8.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-engine-5.8.2-javadoc1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-engine-1.8.2-javadoc1.jar!/"/>
+        </JAVADOC>
+        <SOURCES>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-5.8.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-api-5.8.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/opentest4j-1.2.0-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-commons-1.8.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/apiguardian-api-1.1.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-params-5.8.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-jupiter-engine-5.8.2-sources1.jar!/"/>
+            <root url="jar://$PROJECT_DIR$/lib/junit-platform-engine-1.8.2-sources1.jar!/"/>
+        </SOURCES>
+    </library>
+</component>
