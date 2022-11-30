@@ -62,9 +62,7 @@ public class RouterApp extends GUILayer {
         // Components Setting
         staticRouteFrame = createStaticRouteFrame();
         proxyARPFrame = createProxyARPFrame();
-        routeAddButton.addActionListener(e -> {
-            staticRouteFrame.setVisible(true);
-        });
+        routeAddButton.addActionListener(e -> staticRouteFrame.setVisible(true));
         routeDeleteButton.addActionListener(e -> {
             if (routeTable.getSelectedRow() != -1) {
                 routeList.remove(routeTable.getSelectedRow());
@@ -77,9 +75,7 @@ public class RouterApp extends GUILayer {
                 ((ARPLayer) LayerManager.getInstance().get(StaticRouterMain.ARP, getLayerNumber())).removeCache(address);
             }
         });
-        proxyAddButton.addActionListener(e -> {
-            proxyARPFrame.setVisible(true);
-        });
+        proxyAddButton.addActionListener(e -> proxyARPFrame.setVisible(true));
         proxyDeleteButton.addActionListener(e -> {
             if (proxyTable.getSelectedRow() != -1) {
                 IPAddress address = new IPAddress((String) proxyTable.getValueAt(proxyTable.getSelectedRow(), 0));
@@ -190,7 +186,13 @@ public class RouterApp extends GUILayer {
                 printError("invalid netmask");
                 return;
             }
-            IPAddress gateway = new IPAddress(gatewayField.getText());
+            if (flagHost.isSelected()) {
+                if (!netmask.equals(IPAddress.BROADCAST)) {
+                    printError("not a host mask");
+                    return;
+                }
+            }
+            IPAddress gateway = flagGateway.isSelected() ? new IPAddress(gatewayField.getText()) : IPAddress.ZERO;
 
             // Remove previously added entries with same destination and netmask
             routeList.removeIf(entry -> entry.destination.equals(destination) && entry.netmask.equals(netmask));

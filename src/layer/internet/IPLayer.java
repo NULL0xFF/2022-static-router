@@ -99,7 +99,6 @@ public class IPLayer extends LayerAdapter {
 
         if (isValid(interfaceLayerFrom, receivedPacket.getDestination())) {
             // 목적지가 라우터일 경우
-            return; // TODO ICMP의 경우 처리 ?
         } else {
             // 패킷 라우팅 처리
 
@@ -107,27 +106,55 @@ public class IPLayer extends LayerAdapter {
             RouterApp.RouteEntry entry = routerApp.findEntry(receivedPacket.getDestination());
 
             if (entry != null) {
-                // Entry 가 존재할 경우 Static Routing 처리
-                // Entry에 해당하는 인터페이스가 적용된 NILayer 찾기
                 for (Layer layer : LayerManager.getInstance().getList(StaticRouterMain.SETTING)) {
                     if (entry.interfaceWrapper().get().equals(((SettingApp) layer).getInterface())) {
-                        // 인터페이스 선택됨
-                        ARPLayer arpLayer = (ARPLayer) getUnderLayer(StaticRouterMain.ARP, getLayerNumber());
-                        MACAddress destinationMAC = arpLayer.getMACAddress(receivedPacket.getDestination());
-                        if (destinationMAC == null) {
-                            new Thread(() -> {
-                                try {
-                                    arpLayer.request(layer.getLayerNumber(), receivedPacket.getDestination()).join();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                                MACAddress requestMAC = arpLayer.getMACAddress(entry.gateway());
-                                if (requestMAC != null) {
-                                    new Thread(() -> ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), requestMAC, data, EthernetFrame.Type.IP)).start();
-                                }
-                            }).start();
-                        } else {
-                            new Thread(() -> ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), destinationMAC, data, EthernetFrame.Type.IP)).start();
+                        if (entry.isUp() && !entry.isGateway() && !entry.isHost()) {
+                            // ARP 과정을 통해 해당 패킷의 목적지(Host2)의 MAC 주소를 알아낸 뒤 패킷의 목적지로 패킷을 전송
+                            ARPLayer arpLayer = (ARPLayer) getUnderLayer(StaticRouterMain.ARP, getLayerNumber());
+                            MACAddress destinationMAC = arpLayer.getMACAddress(receivedPacket.getDestination());
+
+                            if (destinationMAC == null) {
+                                // ARP Cache 가 존재하지 않을 경우 패킷 전송을 스레드화 해서 이후에 ARP를 받으면 처리
+                                // ARP Request 에 실패할 경우 Drop
+                                new Thread(() -> {
+                                    try {
+                                        arpLayer.request(layer.getLayerNumber(), receivedPacket.getDestination()).join();
+                                    } catch (InterruptedException ignored) {
+                                    }
+                                    MACAddress requestedMAC = arpLayer.getMACAddress(receivedPacket.getDestination());
+                                    if (requestedMAC != null) {
+                                        // 패킷 전송
+                                        ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), requestedMAC, receivedPacket.toBytes(), EthernetFrame.Type.IP);
+                                    }
+                                }).start();
+                            } else {
+                                // ARP Cache Hit
+                                ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), destinationMAC, receivedPacket.toBytes(), EthernetFrame.Type.IP);
+                            }
+                        } else if (entry.isUp() && entry.isGateway() && !entry.isHost()) {
+                            // ARP 과정을 통해 해당 Entry 의 Gateway의 MAC 주소를 알아낸 뒤 Gateway로 패킷을 전송
+                            // 전송 시, 해당 Entry의 Interface를 통해서 패킷을 전송
+                            ARPLayer arpLayer = (ARPLayer) getUnderLayer(StaticRouterMain.ARP, getLayerNumber());
+                            MACAddress destinationMAC = arpLayer.getMACAddress(entry.gateway());
+
+                            if (destinationMAC == null) {
+                                // ARP Cache 가 존재하지 않을 경우 패킷 전송을 스레드화 해서 이후에 ARP를 받으면 처리
+                                // ARP Request 에 실패할 경우 Drop
+                                new Thread(() -> {
+                                    try {
+                                        arpLayer.request(layer.getLayerNumber(), entry.gateway()).join();
+                                    } catch (InterruptedException ignored) {
+                                    }
+                                    MACAddress requestedMAC = arpLayer.getMACAddress(entry.gateway());
+                                    if (requestedMAC != null) {
+                                        // 패킷 전송
+                                        ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), requestedMAC, receivedPacket.toBytes(), EthernetFrame.Type.IP);
+                                    }
+                                }).start();
+                            } else {
+                                // ARP Cache Hit
+                                ((EthernetLayer) getUnderLayer(StaticRouterMain.ETHERNET, getLayerNumber())).send(layer.getLayerNumber(), destinationMAC, receivedPacket.toBytes(), EthernetFrame.Type.IP);
+                            }
                         }
                     }
                 }
